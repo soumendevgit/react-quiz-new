@@ -1,10 +1,11 @@
+/* eslint-disable react/button-has-type */
 import React from 'react'
 import classes from '../styles/Button.module.css'
 
-export default function Button({className, children}) {
+export default function Button({type ,className, children}) {
     return (
-        <div className={`${classes.button} ${className}`}>
+        <button type={type} className={`${classes.button} ${className}`}>
             {children}
-        </div>
+        </button>
     )
 }
