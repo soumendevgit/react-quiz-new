@@ -1,20 +1,20 @@
 import { get, getDatabase, orderByKey, query, ref } from "firebase/database";
 import { useEffect, useState } from 'react';
 
-export default function useQuestions(videoID) {
+export default function useAnswers(videoID) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
-    const [questions, setQuestions] = useState([]);
+    const [answers, setAnswers] = useState([]);
 
     useEffect(()=>{
         
-        async function fetchQuestions() {
+        async function fetchAnswers() {
             // database related works
             const db = getDatabase();
-            const quizRef = ref(db, `quiz/${  videoID  }/questions`);
-            const quizQuery = query(
-                quizRef, 
+            const answerRef = ref(db, `answers/${  videoID  }/questions`);
+            const answerQuery = query(
+                answerRef, 
                 orderByKey()
             );
 
@@ -23,11 +23,12 @@ export default function useQuestions(videoID) {
                 setLoading(true);
 
                 // request firebase database
-                const snapshot =  await get(quizQuery);
+                const snapshot =  await get(answerQuery);
                 setLoading(false);
                 
                 if (snapshot.exists()) {
-                    setQuestions((prevQuestions) => [...prevQuestions, ...Object.values(snapshot.val())]);                    
+                    setAnswers((prevAnswers) => [...prevAnswers, ...Object.values(snapshot.val())]);
+                    // console.log(snapshot.val());
                 }
 
                 
@@ -40,12 +41,12 @@ export default function useQuestions(videoID) {
         }
 
         setTimeout(()=> {
-            fetchQuestions();
+            fetchAnswers();
         }, 1000);
 
         
-    }, [ videoID]);
+    }, [videoID]);
     return {
-        loading, error, questions
+        loading, error, answers
     }
 }

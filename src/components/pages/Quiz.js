@@ -47,6 +47,7 @@ export default function Quiz() {
     const history = useHistory();
 
     useEffect(() => {
+        console.log(questions);
         dispatch({
             type: "questions",
             value: questions
