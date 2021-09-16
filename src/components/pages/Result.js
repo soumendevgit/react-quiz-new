@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import _ from 'lodash';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import useAnswers from '../../hooks/useAnswers';
@@ -12,16 +14,34 @@ export default function Result() {
     const {state}   = location;
     const {qna} = state;
 
-    const {loading, error, answers} = useAnswers();
+    const {loading, error, answers} = useAnswers(id);
 
-    // function calculate() {
-    //     const score = 0;
-    //     answers.forEach((question, index1) => {
-    //         const correctIndexes = [];
-    //         const checkedIndex = [];
+    function calculate() {
+        
+        let score = 0;
+        answers.forEach((question, index1) => {
+            const correctIndexes = [];
+            const checkedIndexes = [];
+
+            question.options.forEach((option, index2) => {
+                const newoption = option;
+                if(option.correct) correctIndexes.push(index2);
+                if(qna[index1].options[index2].checked){
+                    checkedIndexes.push(index2);
+                    newoption.checked = true;
+                }
+            });
+
+            if (_.isEqual(correctIndexes, checkedIndexes)) {
+                score +=5;
+            }
             
-    //     });
-    // }
+        });
+
+        return score;
+    }
+
+    const usersScore = calculate();
 
 
     return (
@@ -32,8 +52,8 @@ export default function Result() {
 
             {answers && answers.length > 0 && (
                 <>
-                    <Summary />
-                    <Analysis />
+                    <Summary score={usersScore} noq={answers.length} />
+                    <Analysis answers={answers} />
                 </>
             )}
 

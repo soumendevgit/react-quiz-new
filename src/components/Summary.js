@@ -1,21 +1,54 @@
-import React from 'react'
-import image from '../assets/images/success.png'
-import classes from '../styles/Summary.module.css'
+/* eslint-disable consistent-return */
+import React, { useMemo } from 'react';
+import successImage from '../assets/images/success.png';
+import useFetch from '../hooks/useFetch';
+import classes from '../styles/Summary.module.css';
 
-export default function Summary() {
+export default function Summary({score = 0, noq}) {
+
+
+  const getKeyword = useMemo(() => {
+    if ((score / (noq*5)) * 100 < 50) {
+      return "failed";
+    }
+    if ((score / (noq*5)) * 100 < 75){
+      return "good"
+    } 
+    if ((score / (noq*5)) * 100 < 100){
+      return "very-good"
+    } 
+    if ((score / (noq*5)) * 100 < 100){
+      return "excellent"
+    } 
+      
+    
+  }, [noq, score])
+
+  const {loading, error, result} = useFetch(`https://api.pexels.com/v1/search?query=${getKeyword}&per_page=1`, "GET", {
+    Authorization: process.env.REACT_APP_PEXELS_API_KEY
+  });
+
+  const image = result ? result?.photos[0].src.medium : successImage;
+
+
     return (
         <div className={classes.summary}>
           <div className={classes.point}>
              {/* progress bar will be placed here  */}
             <p className={classes.score}>
               Your score is <br />
-              5 out of 10
+              {score} out of {noq*5}
             </p>
           </div>
 
-          <div className={classes.badge}>
+          {loading && <div className={classes.badge}>Loading your badge</div>}
+          {error && <div className={classes.badge}>There was an error!...</div>}
+
+          {!loading && !error && (
+            <div className={classes.badge}>
             <img src={image} alt="Success" />
           </div>
+          )}
         </div>
     )
 }

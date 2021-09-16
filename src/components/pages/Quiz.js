@@ -23,7 +23,7 @@ const reducer = (state, action)=> {
                     option.checked = false;
                 });
             });
-
+            // console.log(action.value);
             return action.value;
 
             case "answer":
@@ -46,12 +46,17 @@ export default function Quiz() {
     const{currentUser} = useAuth();
     const history = useHistory();
 
-    useEffect(() => {
-        console.log(questions);
+    const {location} = history;
+    const {state} = location;
+    const {videoTitle} = state;
+
+
+    useEffect(() => {        
         dispatch({
             type: "questions",
             value: questions
         });
+        // console.log(questions);
     }, [questions]);
 
     function handleAnswerChange(e, index) {
@@ -97,6 +102,8 @@ export default function Quiz() {
     // calculate percentage of progress
     const percentage = questions.length > 0 ? ((currentQuestion +1) /(questions.length)) *100 : 0;
 
+    // console.log(qna);
+
     return (
         <>
         {loading && <div>Loading...</div>}
@@ -106,9 +113,9 @@ export default function Quiz() {
                 <h1>{qna[currentQuestion].title}</h1>
                 <h4>Question can have multiple answers</h4>
 
-                <Answers options={qna[currentQuestion].options} handleChange={handleAnswerChange} />
+                <Answers options={qna[currentQuestion].options} handleChange={handleAnswerChange} input />
                 <ProgressBar next={nextQuestion} prev={prevQuestion} progress={percentage} submit={submit} />
-                <MiniPlayer />
+                <MiniPlayer id={id} title={videoTitle} />
             </>
         )}
 
